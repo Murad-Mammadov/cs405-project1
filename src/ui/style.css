@@ -1,0 +1,39 @@
+:root {
+  --bg: #15161a; --panel: #1d1f24; --ink: #ecebe7; --ink2: #a9a59d; --line: #33363d;
+  --accent: #f07a4a; --accent2: #6fb3e0;
+  --mono: "JetBrains Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+  font: 13px/1.45 "Segoe UI", Helvetica, Arial, sans-serif; }
+#app { display: flex; height: 100vh; }
+#viewport { position: relative; flex: 1; min-width: 0; }
+#gpu-canvas { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+#gpu-canvas.dragging { cursor: grabbing; }
+#gpu-canvas.over-point { cursor: pointer; }
+#view-labels span { position: absolute; top: 8px; padding: 2px 8px; border-radius: 4px;
+  background: rgba(0,0,0,.55); font-weight: 600; pointer-events: none; }
+#stats { position: absolute; left: 8px; bottom: 8px; padding: 6px 10px; border-radius: 6px;
+  background: rgba(0,0,0,.6); font: 12px/1.4 var(--mono); white-space: pre; pointer-events: none; }
+#error { position: absolute; inset: 20px 20px auto 20px; padding: 14px 18px; border-radius: 8px;
+  background: #5a1d14; border: 1px solid #f07a4a; font: 13px/1.5 var(--mono); white-space: pre-wrap; }
+#panel { width: 380px; flex: none; overflow-y: auto; background: var(--panel);
+  border-left: 1px solid var(--line); padding: 8px 14px 40px; }
+#panel details { border-bottom: 1px solid var(--line); padding: 6px 0; }
+#panel summary { cursor: pointer; font-weight: 700; font-size: 14px; padding: 4px 0; color: var(--accent2); }
+#panel .row { display: flex; align-items: center; gap: 8px; margin: 5px 0; }
+#panel .row > label { width: 110px; flex: none; color: var(--ink2); }
+#panel input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+#panel .val { width: 48px; text-align: right; font-family: var(--mono); font-size: 12px; }
+#panel .buttons { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+#panel button, #panel select { font: inherit; color: var(--ink); background: #2a2d34; border: 1px solid var(--line);
+  border-radius: 5px; padding: 4px 9px; cursor: pointer; }
+#panel button:hover { border-color: var(--accent); }
+#panel button.on { background: var(--accent); border-color: var(--accent); color: #111; }
+#panel pre { font: 11.5px/1.4 var(--mono); background: #121317; border: 1px solid var(--line);
+  border-radius: 5px; padding: 6px 8px; margin: 6px 0; overflow-x: auto; white-space: pre; }
+#panel pre.active { border-color: var(--accent); }
+#panel .hint { color: var(--ink2); font-size: 12px; margin: 4px 0; }
+#panel textarea { width: 100%; height: 140px; font: 11px var(--mono); background: #121317; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 5px; }
+@media (max-width: 900px) { #app { flex-direction: column; } #viewport { height: 60vh; flex: none; } #panel { width: auto; } }
