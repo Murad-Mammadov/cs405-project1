@@ -14,5 +14,6 @@ Keep this file up to date and copy it into the report's appendix.
 | 2026-11-13 | Claude Code (Claude Opus 5.5) | Change `src/main.js` so an unfinished curves.js doesn't stop the whole app. | That change (scaffolding only). |
 | 2026-11-13 | Claude Code (Claude Opus 5.5) | Draw the de Casteljau construction with thicker lines; load curve.json at startup so the traced curve survives a page reload. | Those changes (`thickLine` in geometry.js, `Curve.loadJSON`, the fetch in main.js) — scaffolding only. |
 | 2026-11-13 | Claude Code (Claude Opus 5.5) | "Zoom to C(t)" / "Zoom out" buttons and a Follower toggle, for a readable de Casteljau screenshot. | Those UI changes (panel.js, main.js) — scaffolding only. |
+| 2026-11-13 | Claude Code (Claude Opus 5.5) | A report template (docs/report_template.docx): section headings, my screenshots with captions, my measured numbers, prompts for what each section must cover. | The layout; the text and derivations are mine. |
 
 <!-- Add a row every time you ask an AI assistant to explain something or help you debug. -->
