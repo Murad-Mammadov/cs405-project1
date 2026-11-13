@@ -1,0 +1,87 @@
+{
+  "painting": {
+    "artist": "Şeker Ahmed Paşa",
+    "title": "Kavunlu Natürmort (Still Life with Melon)",
+    "collection": "Sakıp Sabancı Museum"
+  },
+  "coordinates": "normalised painting coordinates: u right, v up, origin at the bottom-left corner, both in [0, 1]",
+  "curve": {
+    "type": "piecewise cubic Bezier",
+    "continuity": "C1",
+    "segments": 3,
+    "layout": "K0 H H K1 H H K2 ... (knots at indices 0, 3, 6, ...)",
+    "controlPoints": [
+      {
+        "u": 0.3118,
+        "v": 0.6692,
+        "role": "knot"
+      },
+      {
+        "u": 0.3941,
+        "v": 0.7017,
+        "role": "handle"
+      },
+      {
+        "u": 0.4566,
+        "v": 0.7298,
+        "role": "handle"
+      },
+      {
+        "u": 0.5389,
+        "v": 0.7396,
+        "role": "knot"
+      },
+      {
+        "u": 0.6213,
+        "v": 0.7494,
+        "role": "handle"
+      },
+      {
+        "u": 0.6728,
+        "v": 0.7524,
+        "role": "handle"
+      },
+      {
+        "u": 0.7323,
+        "v": 0.7406,
+        "role": "knot"
+      },
+      {
+        "u": 0.7919,
+        "v": 0.7288,
+        "role": "handle"
+      },
+      {
+        "u": 0.8889,
+        "v": 0.6937,
+        "role": "handle"
+      },
+      {
+        "u": 0.8883,
+        "v": 0.5846,
+        "role": "knot"
+      }
+    ]
+  },
+  "catmullRom": {
+    "type": "uniform Catmull-Rom through the knots",
+    "knots": [
+      {
+        "u": 0.3118,
+        "v": 0.6692
+      },
+      {
+        "u": 0.5389,
+        "v": 0.7396
+      },
+      {
+        "u": 0.7323,
+        "v": 0.7406
+      },
+      {
+        "u": 0.8883,
+        "v": 0.5846
+      }
+    ]
+  }
+}
