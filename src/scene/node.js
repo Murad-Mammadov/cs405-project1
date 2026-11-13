@@ -42,6 +42,14 @@ export class Node {
    * parent's frame.
    */
   updateWorld(parentWorld) {
-    throw new Error('TODO: implement Node.updateWorld in src/scene/node.js');
+    if (parentWorld) {
+      this.world = mat4.multiply(parentWorld, this.local);
+    } else {
+      this.world = this.local.slice();
+    }
+
+    for (const child of this.children) {
+      child.updateWorld(this.world);
+    }
   }
 }
