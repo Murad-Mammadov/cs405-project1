@@ -12,7 +12,7 @@ import * as geo from './scene/geometry.js';
 import { buildScene } from './scene/build.js';
 import { OrbitCamera, inspectionCamera } from './scene/cameras.js';
 import { Curve } from './scene/curve.js';
-import { paintingModel, setImageSize } from './scene/painting.js';
+import { paintingModel, setImageSize, uvToWorld } from './scene/painting.js';
 import { buildPanel } from './ui/panel.js';
 import { fmtMat } from './ui/controls.js';
 import { attachInput } from './ui/input.js';
@@ -25,7 +25,7 @@ const labelsEl = document.getElementById('view-labels');
 const DEFAULTS = {
   view: 'split',
   showAxes: true, showFrustum: true, showGrid: true,
-  showCasteljau: true, showPolygon: true, showOther: false,
+  showCasteljau: true, showPolygon: true, showOther: false, showFollower: true,
   paused: false, animSpeed: 1,
   curveAnimate: true, curveSpeed: 0.08,
   selectedNode: 'lampHead',
@@ -62,6 +62,11 @@ async function main() {
     camera = new OrbitCamera();
     curve = new Curve();
   } catch (e) { showError(e); return; }
+  // start from the exported trace if the repo has one (curve.json in the project root)
+  try {
+    const res = await fetch(`${import.meta.env.BASE_URL}curve.json`, { cache: 'no-store' });
+    if (res.ok) curve.loadJSON(await res.json());
+  } catch (e) { console.warn('No usable curve.json, using the default trace.', e); }
 
   let animTime = 0;
   const actions = {
@@ -70,6 +75,13 @@ async function main() {
         if (k === 'obj') Object.assign(state.obj, DEFAULTS.obj); else state[k] = DEFAULTS[k];
       }
       camera.reset(); curve.reset(); animTime = 0;
+    },
+    /** Close-up, straight on, centred on the current curve point (for the de Casteljau screenshot). */
+    zoomToCurvePoint() {
+      const p = uvToWorld(curve.evaluate(curve.t).point);
+      camera.target = [p[0], p[1], 0];
+      camera.yaw = 0; camera.pitch = 0; camera.dist = 1.5; camera.orthographic = false;
+      state.curveAnimate = false;
     },
     exportJSON() {
       const text = JSON.stringify(curve.toJSON(), null, 2);
@@ -149,7 +161,7 @@ async function main() {
       let tris = [], lines = [];
       try {
         const follower = curve.draw(tris, lines, state);
-        meshes.push({ mesh: 'cone', model: follower, color: COLORS.follower });
+        if (state.showFollower) meshes.push({ mesh: 'cone', model: follower, color: COLORS.follower });
         curveTodo = null;
       } catch (e) {
         if (!String(e?.message).startsWith('TODO')) throw e;

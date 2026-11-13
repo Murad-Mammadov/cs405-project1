@@ -78,6 +78,14 @@ export function line(out, a, b, c) {
 export function tri(out, a, b, c, col) {
   for (const p of [a, b, c]) out.push(p[0], p[1], p[2], col[0], col[1], col[2], col[3] ?? 1);
 }
+/** Thick line a→b as a thin quad in the xy-plane (WebGPU lines are always 1 px). */
+export function thickLine(out, a, b, w, col) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+  const nx = (-dy / l) * w, ny = (dx / l) * w;
+  const q = [[a[0] + nx, a[1] + ny, a[2]], [a[0] - nx, a[1] - ny, a[2]], [b[0] - nx, b[1] - ny, b[2]], [b[0] + nx, b[1] + ny, b[2]]];
+  tri(out, q[0], q[1], q[2], col); tri(out, q[0], q[2], q[3], col);
+}
+
 /** Axis-aligned square marker in the xy-plane (the painting plane). */
 export function square(out, p, r, col, diamond = false) {
   const q = diamond

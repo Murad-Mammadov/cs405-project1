@@ -72,10 +72,13 @@ export function buildPanel(root, app) {
   C.toggle(b, 'de Casteljau', state, 'showCasteljau');
   C.toggle(b, 'Control polygon', state, 'showPolygon');
   C.toggle(b, 'Show other curve', state, 'showOther');
+  C.toggle(b, 'Follower', state, 'showFollower');
   b = el('div', { class: 'buttons' }, s);
   C.button(b, 'Remove last segment', () => curve.removeLastSegment());
   C.button(b, 'Reset curve', () => { curve.reset(); C.refresh(); });
   C.button(b, 'Export JSON', () => actions.exportJSON());
+  C.button(b, 'Zoom to C(t)', () => { actions.zoomToCurvePoint(); C.refresh(); });
+  C.button(b, 'Zoom out', () => { camera.reset(); C.refresh(); });
   out.curve = el('pre', {}, s);
   out.json = el('textarea', { readonly: '', placeholder: 'Exported JSON appears here (and downloads as curve.json).' }, s);
 

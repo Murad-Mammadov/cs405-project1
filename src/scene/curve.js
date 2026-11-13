@@ -6,7 +6,7 @@
 import * as curves from '../math/curves.js';
 import * as mat4 from '../math/mat4.js';
 import { painting, uvToWorld } from './painting.js';
-import { line, tri, square } from './geometry.js';
+import { line, tri, square, thickLine } from './geometry.js';
 
 // Default trace: upper contour of the melon, in image pixels (720 × 502).
 // Retrace it yourself by dragging the points — this is only a starting point.
@@ -28,10 +28,18 @@ const COL = {
 export class Curve {
   constructor() { this.reset(); }
 
+  /** Load control points from an exported curve.json (see toJSON). They become the reset state. */
+  loadJSON(data) {
+    const cps = data?.curve?.controlPoints;
+    if (!Array.isArray(cps) || cps.length < 4 || (cps.length - 1) % 3 !== 0) throw new Error('curve.json: bad controlPoints');
+    this.initial = cps.map((p) => [p.u, p.v]);
+    this.points = this.initial.map((p) => p.slice());
+  }
+
   reset() {
-    this.points = DEFAULT_PX.map(toUv);
+    this.points = (this.initial ?? DEFAULT_PX.map(toUv)).map((p) => p.slice());
     this.mode = 'bezier';        // 'bezier' (piecewise, C¹) | 'catmull' (through the knots)
-    this.t = 0.35;               // global parameter for de Casteljau + follower
+    this.t = this.t ?? 0.35;     // global parameter for de Casteljau + follower
   }
 
   get segments() { return (this.points.length - 1) / 3; }
@@ -132,8 +140,8 @@ export class Curve {
       const levels = curves.deCasteljau(this.points.slice(s, s + 4), ev.localT);
       for (let d = 1; d < levels.length; d++) {
         const L = levels[d], col = COL.levels[d - 1];
-        for (let k = 0; k + 1 < L.length; k++) line(lines, W(L[k], Z_CONSTRUCT), W(L[k + 1], Z_CONSTRUCT), col);
-        for (const p of L) square(tris, W(p, Z_CONSTRUCT), 0.025, col, true);
+        for (let k = 0; k + 1 < L.length; k++) thickLine(tris, W(L[k], Z_CONSTRUCT), W(L[k + 1], Z_CONSTRUCT), 0.006, col);
+        for (const p of L) square(tris, W(p, Z_CONSTRUCT + 0.002), d === 3 ? 0.04 : 0.03, col, true);
       }
     }
     for (const i of this.editable()) square(tris, W(this.points[i], Z_POINTS), i % 3 === 0 ? 0.045 : 0.032, i % 3 === 0 ? COL.knot : COL.handle, i % 3 !== 0);
