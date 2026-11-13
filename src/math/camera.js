@@ -45,11 +45,18 @@ export function lookAt(eye, target, up) {
   ]);
 }
 
-export function perspective(fovY, aspect, near, far) { return todo('perspective'); }
+export function perspective(fovY, aspect, near, far) {
+  const f = 1 / Math.tan(fovY / 2);
+  const A = far / (near - far);
+  const B = (near * far) / (near - far);
 
-/**
- * Orthographic projection for WebGPU, same near/far behaviour as perspective():
- *  camera-space box [left,right] × [bottom,top] × [−near, −far]
- *  → ndc [−1,1] × [−1,1] × [0,1], with clip.w = 1.
- */
+  return new Float32Array([
+    f / aspect, 0,  0,  0, 
+    0,  f,  0,  0, 
+    0,  0,  A, -1, 
+    0,  0,  B,  0 
+  ]);
+}
+
+
 export function orthographic(left, right, bottom, top, near, far) { return todo('orthographic'); }
