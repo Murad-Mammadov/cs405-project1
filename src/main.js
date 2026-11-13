@@ -90,7 +90,8 @@ async function main() {
     const half = Math.floor(w / 2);
     return { main: [0, 0, half - 1, h], inspect: [half + 1, 0, w - half - 1, h] };
   };
-  attachInput(canvas, { camera, curve, layout, onError: showError });
+  attachInput(canvas, { camera, curve, layout,
+    onError: (e) => (String(e?.message).startsWith('TODO') ? console.warn(e.message) : showError(e)) });
 
   window.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
@@ -111,6 +112,7 @@ async function main() {
   const ROT = { x: mat4.rotateX, y: mat4.rotateY, z: mat4.rotateZ };
   const perf = { frameMs: 16, cpuMs: 0, vertices: 0, draws: 0 };
   let lastNow = performance.now(), lastUi = 0;
+  let curveTodo = null;   // message of the first unimplemented curve function, if any
 
   function frame(now) {
     if (stopped) return;
@@ -143,9 +145,16 @@ async function main() {
       meshes.push({ mesh: 'cube', model: objM, color: COLORS.object });
 
       // --- D: curve on the painting + follower
-      const tris = [], lines = [];
-      const follower = curve.draw(tris, lines, state);
-      meshes.push({ mesh: 'cone', model: follower, color: COLORS.follower });
+      // (while curves.js is unfinished, skip the curve instead of stopping the app)
+      let tris = [], lines = [];
+      try {
+        const follower = curve.draw(tris, lines, state);
+        meshes.push({ mesh: 'cone', model: follower, color: COLORS.follower });
+        curveTodo = null;
+      } catch (e) {
+        if (!String(e?.message).startsWith('TODO')) throw e;
+        curveTodo = e.message; tris = []; lines = [];
+      }
 
       if (state.showGrid) geo.grid(lines);
       if (state.showAxes) {
@@ -218,6 +227,9 @@ async function main() {
     panel.viewMat.textContent = `V = lookAt(eye, target, up)\n${fmtMat(camera.view(), 3)}`;
     panel.projMat.textContent = `P = ${camera.orthographic ? 'orthographic' : 'perspective'}   (aspect ${aspect.toFixed(3)})\n${fmtMat(camera.projection(aspect), 3)}`;
     // D
+    if (curveTodo) {
+      panel.curve.textContent = `Curve not drawn yet:\n${curveTodo}`;
+    } else {
     const ev = curve.evaluate(curve.t);
     const P = curve.points;
     let joints = '';
@@ -232,6 +244,7 @@ async function main() {
       `C(t)       (${ev.point.map((x) => x.toFixed(4)).join(', ')})  normalised\n` +
       `C'(t)      (${ev.tangent.map((x) => x.toFixed(3)).join(', ')})\n` +
       (curve.mode === 'bezier' ? `C¹ check (0 = continuous):\n${joints}` : '');
+    }
     // E
     panel.perf.textContent =
       `frame time   ${perf.frameMs.toFixed(2)} ms  (${(1000 / perf.frameMs).toFixed(1)} fps)\n` +

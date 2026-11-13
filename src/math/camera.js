@@ -58,5 +58,19 @@ export function perspective(fovY, aspect, near, far) {
   ]);
 }
 
+export function orthographic(left, right, bottom, top, near, far) {
+  const Sx = 2 / (right - left);
+  const Sy = 2 / (top - bottom);
+  const Sz = 1 / (near - far);
 
-export function orthographic(left, right, bottom, top, near, far) { return todo('orthographic'); }
+  const Tx = -(right + left) / (right - left);
+  const Ty = -(top + bottom) / (top - bottom);
+  const Tz = near / (near - far);
+
+  return new Float32Array([
+    Sx, 0,  0,  0, 
+    0,  Sy, 0,  0, 
+    0,  0,  Sz, 0, 
+    Tx, Ty, Tz, 1 
+  ]);
+}
